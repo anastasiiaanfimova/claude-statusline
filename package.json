@@ -1,6 +1,6 @@
 {
   "name": "@anastasiiaanfimova/claude-statusline",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Claude Code statusline — minimalist theme with dot bars and muted colors",
   "bin": {
     "claude-statusline": "bin/install.js"
