@@ -4,7 +4,7 @@ Minimalist Claude Code statusline — dot progress bars, muted colors, clean lay
 
 Forked from [kamranahmedse/claude-statusline](https://github.com/kamranahmedse/claude-statusline).
 
-![demo](./.github/demo.png)
+![demo](https://raw.githubusercontent.com/anastasiiaanfimova/claude-statusline/main/.github/demo.png)
 
 **What's different:**
 - Dot bars `·` instead of circles `●○`
