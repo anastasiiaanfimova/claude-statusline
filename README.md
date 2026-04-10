@@ -6,14 +6,6 @@ Forked from [kamranahmedse/claude-statusline](https://github.com/kamranahmedse/c
 
 ![demo](./.github/demo.png)
 
-```
-/my-project  Sonnet 4.6
-context ··········  12%
-current ··········  38% → 14:30
-week 5% → april 17, 18:00
-extra $8.90/$10.00
-```
-
 **What's different:**
 - Dot bars `·` instead of circles `●○`
 - Muted color palette — color only where it matters (context load thresholds)
