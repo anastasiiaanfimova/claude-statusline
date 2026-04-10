@@ -4,6 +4,8 @@ Minimalist Claude Code statusline — dot progress bars, muted colors, clean lay
 
 Forked from [kamranahmedse/claude-statusline](https://github.com/kamranahmedse/claude-statusline).
 
+![demo](./.github/demo.png)
+
 ```
 /my-project  Sonnet 4.6
 context ··········  12%
