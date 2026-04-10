@@ -18,7 +18,7 @@ Forked from [kamranahmedse/claude-statusline](https://github.com/kamranahmedse/c
 ## Install
 
 ```bash
-node bin/install.js
+npx @anastasiiaanfimova/claude-statusline
 ```
 
 Backs up your existing statusline to `~/.claude/statusline.sh.bak` and configures `~/.claude/settings.json`.
@@ -36,7 +36,7 @@ brew install jq
 ## Uninstall
 
 ```bash
-node bin/install.js --uninstall
+npx @anastasiiaanfimova/claude-statusline --uninstall
 ```
 
 Restores from backup if one exists, otherwise removes the script and cleans up settings.
