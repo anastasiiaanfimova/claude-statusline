@@ -1,0 +1,15 @@
+{
+  "name": "claude-statusline",
+  "version": "1.0.0",
+  "description": "Claude Code statusline — Catppuccin Mocha theme with block bar indicators",
+  "bin": {
+    "claude-statusline": "./bin/install.js"
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "statusline",
+    "cli"
+  ],
+  "license": "MIT"
+}
