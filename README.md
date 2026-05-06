@@ -1,5 +1,9 @@
 # claude-statusline
 
+> 📦 **Archived (2026-05).** No longer actively maintained.
+>
+> The original blocker for showing effort level (Claude Code did not expose `effort.level` in the stdin JSON) was resolved in **claude-code ≥2.1.x** — `effort.level` and `thinking.enabled` are now in the stdin payload. See [`TODO.md`](TODO.md) for the small patch to wire it up if anyone wants to fork and revive the project.
+
 Minimalist Claude Code statusline — dot progress bars, muted colors, clean layout.
 
 Forked from [kamranahmedse/claude-statusline](https://github.com/kamranahmedse/claude-statusline).
@@ -13,7 +17,7 @@ Forked from [kamranahmedse/claude-statusline](https://github.com/kamranahmedse/c
 - Directory + model on one line
 - Week and extra usage as plain text, no bar clutter
 - 24-hour time, full month names
-- Effort level removed — not reliably available yet (tracking [anthropics/claude-code#40261](https://github.com/anthropics/claude-code/issues/40261))
+- Effort level removed — was a blocker (not in stdin JSON); **resolved in claude-code ≥2.1.x**, see [`TODO.md`](TODO.md) for the patch
 
 ## Install
 
