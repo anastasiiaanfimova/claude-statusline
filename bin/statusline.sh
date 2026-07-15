@@ -151,8 +151,10 @@ effort=$(echo "$input" | jq -r '.effort.level // empty')
 [ -z "$effort" ] && effort=$(jq -r '.effortLevel // empty' "$HOME/.claude/settings.json" 2>/dev/null)
 [ -n "$effort" ] && line1+=" ${white}(${effort})${reset}"
 
-# ── Context window usage (inline on line 1, no bar) ──────
-line1+="${sep}${white}context${reset} ${pct_color}${pct_used}%${reset}"
+# ── Context window usage (tokens + percent; only the % is colored) ──
+cur_fmt=$(awk -v n="$current" 'BEGIN{ if (n>=1000000) printf "%.1fM", n/1000000; else printf "%.1fk", n/1000 }')
+size_fmt=$(awk -v n="$size" 'BEGIN{ if (n>=1000000) printf "%.1fM", n/1000000; else printf "%.0fk", n/1000 }')
+line1+="${sep}${white}context ${cur_fmt} / ${size_fmt} ${reset}${pct_color}(${pct_used}%)${reset}"
 
 # ── Rate limits from stdin (primary) ────────────────────
 has_stdin_rates=false
@@ -260,8 +262,9 @@ if [ -n "$five_hour_pct" ]; then
     five_hour_reset=$(format_epoch_time "$five_hour_reset_epoch" "time")
     five_hour_pct_color=$(color_for_pct "$five_hour_pct")
 
-    rate_lines+="${white}current${reset} ${five_hour_pct_color}${five_hour_pct}%${reset}"
-    [ -n "$five_hour_reset" ] && rate_lines+=" ${white}→ ${five_hour_reset}${reset}"
+    # labels/arrows/times grey; percent keeps its threshold color
+    rate_lines+="${lightgrey}current${reset} ${five_hour_pct_color}${five_hour_pct}%${reset}"
+    [ -n "$five_hour_reset" ] && rate_lines+=" ${lightgrey}→ ${five_hour_reset}${reset}"
 fi
 
 extra_line=""
@@ -269,7 +272,8 @@ extra_line=""
 # week appended to the current line (same row)
 if [ -n "$seven_day_pct" ]; then
     seven_day_reset=$(format_epoch_time "$seven_day_reset_epoch" "datetime")
-    week_seg="${white}week ${seven_day_pct}% → ${seven_day_reset}${reset}"
+    seven_day_pct_color=$(color_for_pct "$seven_day_pct")
+    week_seg="${lightgrey}week${reset} ${seven_day_pct_color}${seven_day_pct}%${reset} ${lightgrey}→ ${seven_day_reset}${reset}"
     if [ -n "$rate_lines" ]; then
         rate_lines+="${sep}${week_seg}"
     else
@@ -285,9 +289,10 @@ if [ "$extra_enabled" = "true" ] && [ -n "$usage_data" ]; then
     extra_line+="${white}extra \$${extra_used}/\$${extra_limit}${reset}"
 fi
 
-# ── Output ───────────────────────────────────────────────
-printf "%b" "$line1"
-[ -n "$rate_lines" ] && printf "\n%b" "$rate_lines"
-[ -n "$extra_line" ] && printf "\n%b" "$extra_line"
+# ── Output (all statuses on one line) ────────────────────
+mainline="$line1"
+[ -n "$rate_lines" ] && mainline+="${sep}${rate_lines}"
+[ -n "$extra_line" ] && mainline+="${sep}${extra_line}"
+printf "%b" "$mainline"
 
 exit 0
