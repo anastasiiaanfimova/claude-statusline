@@ -1,19 +1,21 @@
 # claude-statusline
 
-Minimalist Claude Code statusline — dot progress bars, muted colors, clean layout.
+Minimalist Claude Code statusline — compact two-line layout, muted colors, middot separators.
 
 Forked from [kamranahmedse/claude-statusline](https://github.com/kamranahmedse/claude-statusline).
 
-![demo](https://raw.githubusercontent.com/anastasiiaanfimova/claude-statusline/main/.github/demo.png)
+```
+/my-project (main) · Opus 4.8 (high) · context 53%
+current 15% → 13:30 · week 21% → july 21, 6:00
+```
 
 **What's different:**
-- Dot bars `·` instead of circles `●○`
-- Muted color palette — color only where it matters (context load thresholds)
-- Model name formatted as `Sonnet 4.6` instead of `claude-sonnet-4-6`
-- Directory + model on one line
-- Week and extra usage as plain text, no bar clutter
+- Compact two-line layout — directory, branch, model, effort and context on line 1; rate limits on line 2
+- Plain percentages with `·` separators — no progress-bar clutter
+- Muted color palette — color only where it matters (context / rate-limit thresholds)
+- Model name formatted as `Opus 4.8` instead of `claude-opus-4-8`
+- Effort level next to the model (`Opus 4.8 (high)`) — reads `effort.level` from stdin (claude-code ≥2.1.x), falls back to `effortLevel` in `settings.json`
 - 24-hour time, full month names
-- Effort level shown next to the model (`Opus 4.8 - high`) — reads `effort.level` from stdin (claude-code ≥2.1.x), falls back to `effortLevel` in `settings.json`
 
 ## Install
 

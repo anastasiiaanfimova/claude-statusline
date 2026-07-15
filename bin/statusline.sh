@@ -16,10 +16,10 @@ cyan='\033[38;2;86;182;194m'
 red='\033[38;2;255;85;85m'
 yellow='\033[38;2;230;200;0m'
 white='\033[38;2;220;220;220m'
-dim='\033[2m'
+lightgrey='\033[38;2;150;150;150m'
 reset='\033[0m'
 
-sep=" ${white}│${reset} "
+sep=" ${lightgrey}·${reset} "
 
 # ── Helpers ──────────────────────────────────────────────
 color_for_pct() {
@@ -29,24 +29,6 @@ color_for_pct() {
     elif [ "$pct" -ge 50 ]; then printf "$orange"
     else printf "$green"
     fi
-}
-
-build_bar() {
-    local pct=$1
-    local width=$2
-    [ "$pct" -lt 0 ] 2>/dev/null && pct=0
-    [ "$pct" -gt 100 ] 2>/dev/null && pct=100
-
-    local filled=$(( pct * width / 100 ))
-    local empty=$(( width - filled ))
-    local bar_color
-    bar_color=$(color_for_pct "$pct")
-
-    local filled_str="" empty_str=""
-    for ((i=0; i<filled; i++)); do filled_str+="·"; done
-    for ((i=0; i<empty; i++)); do empty_str+="·"; done
-
-    printf "${bar_color}${filled_str}${dim}${empty_str}${reset}"
 }
 
 format_epoch_time() {
@@ -160,14 +142,17 @@ fi
 
 line1="${cyan}/${skip_perms}${dirname}${reset}"
 if [ -n "$git_branch" ]; then
-    line1+=" ${green}(${git_branch}${red}${git_dirty}${green})${reset}"
+    line1+=" ${cyan}(${git_branch}${red}${git_dirty}${cyan})${reset}"
 fi
-line1+="  ${white}${model_name}${reset}"
+line1+="${sep}${white}${model_name}${reset}"
 
 # ── Effort level (claude-code ≥2.1.x exposes effort.level in stdin) ──
 effort=$(echo "$input" | jq -r '.effort.level // empty')
 [ -z "$effort" ] && effort=$(jq -r '.effortLevel // empty' "$HOME/.claude/settings.json" 2>/dev/null)
-[ -n "$effort" ] && line1+=" ${dim}- ${effort}${reset}"
+[ -n "$effort" ] && line1+=" ${white}(${effort})${reset}"
+
+# ── Context window usage (inline on line 1, no bar) ──────
+line1+="${sep}${white}context${reset} ${pct_color}${pct_used}%${reset}"
 
 # ── Rate limits from stdin (primary) ────────────────────
 has_stdin_rates=false
@@ -268,30 +253,28 @@ else
     fi
 fi
 
-# ── Rate limit lines ─────────────────────────────────────
+# ── Rate limit line (current + week, no bars) ────────────
 rate_lines=""
-bar_width=10
-
-ctx_bar=$(build_bar "$pct_used" "$bar_width")
-ctx_pct_fmt=$(printf "%3d" "$pct_used")
-rate_lines+="${white}context${reset} ${ctx_bar} ${pct_color}${ctx_pct_fmt}%${reset}"
 
 if [ -n "$five_hour_pct" ]; then
     five_hour_reset=$(format_epoch_time "$five_hour_reset_epoch" "time")
-    five_hour_bar=$(build_bar "$five_hour_pct" "$bar_width")
     five_hour_pct_color=$(color_for_pct "$five_hour_pct")
-    five_hour_pct_fmt=$(printf "%3d" "$five_hour_pct")
 
-    rate_lines+="\n${white}current${reset} ${five_hour_bar} ${five_hour_pct_color}${five_hour_pct_fmt}%${reset}"
+    rate_lines+="${white}current${reset} ${five_hour_pct_color}${five_hour_pct}%${reset}"
     [ -n "$five_hour_reset" ] && rate_lines+=" ${white}→ ${five_hour_reset}${reset}"
 fi
 
-week_line=""
 extra_line=""
 
+# week appended to the current line (same row)
 if [ -n "$seven_day_pct" ]; then
     seven_day_reset=$(format_epoch_time "$seven_day_reset_epoch" "datetime")
-    week_line+="${white}week ${seven_day_pct}% → ${seven_day_reset}${reset}"
+    week_seg="${white}week ${seven_day_pct}% → ${seven_day_reset}${reset}"
+    if [ -n "$rate_lines" ]; then
+        rate_lines+="${sep}${week_seg}"
+    else
+        rate_lines+="${week_seg}"
+    fi
 fi
 
 if [ "$extra_enabled" = "true" ] && [ -n "$usage_data" ]; then
@@ -305,7 +288,6 @@ fi
 # ── Output ───────────────────────────────────────────────
 printf "%b" "$line1"
 [ -n "$rate_lines" ] && printf "\n%b" "$rate_lines"
-[ -n "$week_line" ] && printf "\n%b" "$week_line"
 [ -n "$extra_line" ] && printf "\n%b" "$extra_line"
 
 exit 0
