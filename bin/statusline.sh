@@ -164,6 +164,11 @@ if [ -n "$git_branch" ]; then
 fi
 line1+="  ${white}${model_name}${reset}"
 
+# ── Effort level (claude-code ≥2.1.x exposes effort.level in stdin) ──
+effort=$(echo "$input" | jq -r '.effort.level // empty')
+[ -z "$effort" ] && effort=$(jq -r '.effortLevel // empty' "$HOME/.claude/settings.json" 2>/dev/null)
+[ -n "$effort" ] && line1+=" ${dim}- ${effort}${reset}"
+
 # ── Rate limits from stdin (primary) ────────────────────
 has_stdin_rates=false
 five_hour_pct=""
